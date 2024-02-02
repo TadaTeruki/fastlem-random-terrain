@@ -32,6 +32,25 @@ Command line options can be passed as follows:
 $ docker run -it fastlem-random-terrain fastlem-random-terrain --help
 ```
 
+## Examples
+
+```
+$ fastlem-random-terrain --image-size 300:300
+```
+![terrain](https://github.com/TadaTeruki/fastlem-random-terrain/assets/69315285/d0108ec7-bed7-4dd2-8b5f-48aa4805979e)
+
+```
+$ fastlem-random-terrain --colormap-json-file default_color.json --image-size 300:300
+```
+![terrain](https://github.com/TadaTeruki/fastlem-random-terrain/assets/69315285/26b82599-01e6-4a8c-80a1-0e9c936d19e4)
+
+```
+$ fastlem-random-terrain --colormap-json-file default_color.json --image-size 300:300 --seed 5000
+```
+![terrain](https://github.com/TadaTeruki/fastlem-random-terrain/assets/69315285/565bb330-dd3d-4976-8c72-acf3816e499e)
+
+
+
 ## Options
 
 ```
