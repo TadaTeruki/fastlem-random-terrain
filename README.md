@@ -54,7 +54,7 @@ Options:
           Power of the erodibility distribution. The larger the value, the more the erodibility is concentrated on the lower side. [advanced] [default: 4.0]
   -c, --colormap-json-file <COLORMAP_JSON_FILE>
           JSON file of the colormap. If not specified, the grayscale colormap is used [default: ]
-  -i, --image <IMAGE>
+  -i, --image-size <IMAGE_SIZE>
           Width and height (width:height) of the image. If -1 is specified, the aspect ratio is the same as the bound [default: 1024:-1]
   -i, --image-file <IMAGE_FILE>
           File name of the output image [default: terrain.png]

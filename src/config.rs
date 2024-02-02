@@ -33,7 +33,7 @@ pub struct ConfigParser {
     /// Width and height (width:height) of the image.
     /// If -1 is specified, the aspect ratio is the same as the bound.
     #[clap(short, long, default_value = "1024:-1")]
-    pub image: String,
+    pub image_size: String,
 
     /// File name of the output image.
     #[clap(short, long, default_value = "terrain.png")]
@@ -71,7 +71,7 @@ impl ConfigParser {
 
     pub fn into_config(self) -> Config {
         let (bound_width, bound_height) = ConfigParser::string_into_two_floats(&self.bound);
-        let (image_width, image_height) = ConfigParser::string_into_two_option_uints(&self.image);
+        let (image_width, image_height) = ConfigParser::string_into_two_option_uints(&self.image_size);
         Config {
             bound_width,
             bound_height,
