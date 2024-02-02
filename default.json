@@ -1,0 +1,26 @@
+[
+    {
+        "color": [70, 150, 200],
+        "elevation": 0.0
+    },
+    {
+        "color": [70, 150, 200],
+        "elevation": 0.05
+    },
+    {
+        "color": [240, 240, 210],
+        "elevation": 0.125
+    },
+    {
+        "color": [190, 200, 120],
+        "elevation": 0.5
+    },
+    {
+        "color": [25, 100, 25],
+        "elevation": 25.0
+    },
+    {
+        "color": [15, 60, 15],
+        "elevation": 40.0
+    }
+]
