@@ -27,8 +27,10 @@ fn main() {
         y: config.bound_height,
     };
 
-    let colormap = match &config.colormap_json_file {
-        Some(image_file) => ColorMap::new_from_json_file(image_file).unwrap(),
+    let colormap = match &config.colormap_json_filename {
+        Some(colormap_json_filename) => {
+            ColorMap::new_from_json_file(colormap_json_filename).unwrap()
+        }
         None => ColorMap::default(),
     };
 
@@ -60,7 +62,7 @@ fn main() {
 
     let terrain = generate_terrain(&config, bound_min, bound_max, bound_range);
     write_to_image(
-        &config.image_file,
+        &config.output_filename,
         bound_min,
         bound_range,
         image_width,
@@ -223,7 +225,7 @@ fn generate_terrain(
 }
 
 fn write_to_image(
-    image_file: &str,
+    output_filename: &str,
     bound_min: Site2D,
     bound_range: Site2D,
     image_width: u32,
@@ -248,7 +250,7 @@ fn write_to_image(
             }
         }
     }
-    image_buf.save(image_file).unwrap();
+    image_buf.save(output_filename).unwrap();
 }
 
 fn octaved_perlin(

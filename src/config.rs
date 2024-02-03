@@ -6,29 +6,14 @@ pub struct ConfigParser {
     #[clap(short, long, default_value = "100.0:100.0")]
     pub bound: String,
 
-    /// Seed of the noise generator.
-    #[clap(short, long, default_value = "0")]
-    pub seed: u32,
-
-    /// Number of particles.
-    /// The larger the value, the more the quality of the terrain is improved. [advanced]
-    #[clap(short, long, default_value = "50000")]
-    pub particle_num: usize,
-
-    /// Scale of the fault.
-    /// The larger the value, the more virtual faults effect the terrain. [advanced]
-    #[clap(short, long, default_value = "35.0")]
-    pub fault_scale: f64,
-
-    /// Power of the erodibility distribution.
-    /// The larger the value, the more the erodibility is concentrated on the lower side. [advanced]
-    #[clap(short, long, default_value = "4.0")]
-    pub erodibility_distribution_power: f64,
-
     /// JSON file of the colormap.
     /// If not specified, the grayscale colormap is used.
     #[clap(short, long, default_value = "")]
-    pub colormap_json_file: String,
+    pub colormap_json_filename: String,
+
+    /// Seed of the noise generator.
+    #[clap(short, long, default_value = "0")]
+    pub seed: u32,
 
     /// Width and height (width:height) of the image.
     /// If -1 is specified, the aspect ratio is the same as the bound.
@@ -37,7 +22,22 @@ pub struct ConfigParser {
 
     /// File name of the output image.
     #[clap(short, long, default_value = "terrain.png")]
-    pub image_file: String,
+    pub output_filename: String,
+
+    /// Number of particles.
+    /// The larger the value, the more the quality of the terrain is improved.
+    #[clap(short, long, default_value = "50000")]
+    pub particle_num: usize,
+
+    /// [advanced] Power of the erodibility distribution.
+    /// The larger the value, the more the erodibility is concentrated on the lower side.
+    #[clap(short, long, default_value = "4.0")]
+    pub erodibility_distribution_power: f64,
+
+    /// [advanced] Scale of the fault.
+    /// The larger the value, the more virtual faults effect the terrain.
+    #[clap(short, long, default_value = "35.0")]
+    pub fault_scale: f64,
 }
 
 impl ConfigParser {
@@ -71,7 +71,8 @@ impl ConfigParser {
 
     pub fn into_config(self) -> Config {
         let (bound_width, bound_height) = ConfigParser::string_into_two_floats(&self.bound);
-        let (image_width, image_height) = ConfigParser::string_into_two_option_uints(&self.image_size);
+        let (image_width, image_height) =
+            ConfigParser::string_into_two_option_uints(&self.image_size);
         Config {
             bound_width,
             bound_height,
@@ -79,14 +80,14 @@ impl ConfigParser {
             particle_num: self.particle_num,
             fault_scale: self.fault_scale,
             erodibility_distribution_power: self.erodibility_distribution_power,
-            colormap_json_file: if self.colormap_json_file.is_empty() {
+            colormap_json_filename: if self.colormap_json_filename.is_empty() {
                 None
             } else {
-                Some(self.colormap_json_file.clone())
+                Some(self.colormap_json_filename)
             },
             image_width,
             image_height,
-            image_file: self.image_file.clone(),
+            output_filename: self.output_filename,
         }
     }
 }
@@ -98,8 +99,8 @@ pub struct Config {
     pub particle_num: usize,
     pub fault_scale: f64,
     pub erodibility_distribution_power: f64,
-    pub colormap_json_file: Option<String>,
+    pub colormap_json_filename: Option<String>,
     pub image_width: Option<u32>,
     pub image_height: Option<u32>,
-    pub image_file: String,
+    pub output_filename: String,
 }
