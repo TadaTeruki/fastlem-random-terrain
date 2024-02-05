@@ -40,7 +40,7 @@ pub struct ConfigParser {
     pub fault_scale: f64,
 
     /// [advanced] Approximate ratio of the land area. (0.0-1.0)
-    #[clap(short, long, default_value = "0.7")]
+    #[clap(short, long, default_value = "0.6")]
     pub land_ratio: f64,
 }
 
