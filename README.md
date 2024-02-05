@@ -73,12 +73,14 @@ Options:
           File name of the output image [default: terrain.png]
   -p, --particle-num <PARTICLE_NUM>
           Number of particles. The larger the value, the more the quality of the terrain is improved [default: 50000]
-  -e, --erodibility-distribution-power <ERODIBILITY_DISTRIBUTION_POWER>
+      --erodibility-distribution-power <ERODIBILITY_DISTRIBUTION_POWER>
           [advanced] Power of the erodibility distribution. The larger the value, the more the erodibility is concentrated on the lower side [default: 4.0]
-  -f, --fault-scale <FAULT_SCALE>
+      --fault-scale <FAULT_SCALE>
           [advanced] Scale of the fault. The larger the value, the more virtual faults effect the terrain [default: 35.0]
-  -l, --land-ratio <LAND_RATIO>
-          [advanced] Approximate ratio of the land area. (0.0-1.0) [default: 0.6]
+      --land-ratio <LAND_RATIO>
+          [advanced] Approximate ratio of the land area (0.0-1.0) [default: 0.6]
+      --convex-hull-is-always-outlet
+          [advanced] If true, the edge of the terrain is always the outlet
   -h, --help
           Print help
 ```

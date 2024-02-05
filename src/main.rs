@@ -100,6 +100,18 @@ fn generate_terrain(
         .build()
         .unwrap();
 
+    // count edge sites
+    let edge_sites_len = model
+        .sites()
+        .iter()
+        .filter(|site| {
+            site.x == bound_min.x
+                || site.x == bound_max.x
+                || site.y == bound_min.y
+                || site.y == bound_max.y
+        })
+        .count();
+
     println!("distributing params...");
 
     let sites = model.sites().to_vec();
@@ -185,10 +197,17 @@ fn generate_terrain(
             .collect::<Vec<bool>>()
     };
 
-    let start_index = (num + 1..sites.len()).collect::<Vec<_>>();
+    let start_index = ((sites.len() - edge_sites_len)..sites.len()).collect::<Vec<_>>();
     let graph = model.graph();
 
-    let is_outlet = determine_outlets(&sites, base_is_outlet, start_index, graph).unwrap();
+    let is_outlet = determine_outlets(
+        &sites,
+        base_is_outlet,
+        start_index,
+        graph,
+        config.convex_hull_is_always_outlet,
+    )
+    .unwrap();
 
     println!("generating...");
 
@@ -285,16 +304,21 @@ fn determine_outlets(
     base_is_outlet: Vec<bool>,
     start_index: Vec<usize>,
     graph: &EdgeAttributedUndirectedGraph<f64>,
+    convex_hull_is_always_outlet: bool,
 ) -> Option<Vec<bool>> {
     let random_start_index = if start_index.is_empty() {
         None
     } else {
         Some(start_index[0])
     };
-    let mut queue = start_index
-        .into_iter()
-        .filter(|i| base_is_outlet[*i])
-        .collect::<Vec<_>>();
+    let mut queue = if convex_hull_is_always_outlet {
+        start_index
+    } else {
+        start_index
+            .into_iter()
+            .filter(|i| base_is_outlet[*i])
+            .collect::<Vec<_>>()
+    };
     let mut is_outlet = if !queue.is_empty() {
         let mut is_outlet = vec![false; sites.len()];
         while let Some(i) = queue.pop() {

@@ -39,9 +39,13 @@ pub struct ConfigParser {
     #[clap(long, default_value = "35.0")]
     pub fault_scale: f64,
 
-    /// [advanced] Approximate ratio of the land area. (0.0-1.0)
+    /// [advanced] Approximate ratio of the land area (0.0-1.0).
     #[clap(long, default_value = "0.6")]
     pub land_ratio: f64,
+
+    /// [advanced] If true, the edge of the terrain is always the outlet.
+    #[clap(long)]
+    pub convex_hull_is_always_outlet: bool,
 }
 
 impl ConfigParser {
@@ -93,6 +97,7 @@ impl ConfigParser {
             image_height,
             output_filename: self.output_filename,
             land_ratio: self.land_ratio,
+            convex_hull_is_always_outlet: self.convex_hull_is_always_outlet,
         }
     }
 }
@@ -109,4 +114,5 @@ pub struct Config {
     pub image_height: Option<u32>,
     pub output_filename: String,
     pub land_ratio: f64,
+    pub convex_hull_is_always_outlet: bool,
 }
