@@ -31,16 +31,16 @@ pub struct ConfigParser {
 
     /// [advanced] Power of the erodibility distribution.
     /// The larger the value, the more the erodibility is concentrated on the lower side.
-    #[clap(short, long, default_value = "4.0")]
+    #[clap(long, default_value = "4.0")]
     pub erodibility_distribution_power: f64,
 
     /// [advanced] Scale of the fault.
     /// The larger the value, the more virtual faults effect the terrain.
-    #[clap(short, long, default_value = "35.0")]
+    #[clap(long, default_value = "35.0")]
     pub fault_scale: f64,
 
     /// [advanced] Approximate ratio of the land area. (0.0-1.0)
-    #[clap(short, long, default_value = "0.6")]
+    #[clap(long, default_value = "0.6")]
     pub land_ratio: f64,
 }
 

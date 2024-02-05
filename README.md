@@ -63,20 +63,22 @@ Usage: fastlem-random-terrain [OPTIONS]
 Options:
   -b, --bound <BOUND>
           Width and height (width:height) of the bound [default: 100.0:100.0]
+  -c, --colormap-json-filename <COLORMAP_JSON_FILENAME>
+          JSON file of the colormap. If not specified, the grayscale colormap is used [default: ]
   -s, --seed <SEED>
           Seed of the noise generator [default: 0]
-  -p, --particle-num <PARTICLE_NUM>
-          Number of particles. The larger the value, the more the quality of the terrain is improved. [advanced] [default: 50000]
-  -f, --fault-scale <FAULT_SCALE>
-          Scale of the fault. The larger the value, the more virtual faults effect the terrain. [advanced] [default: 35.0]
-  -e, --erodibility-distribution-power <ERODIBILITY_DISTRIBUTION_POWER>
-          Power of the erodibility distribution. The larger the value, the more the erodibility is concentrated on the lower side. [advanced] [default: 4.0]
-  -c, --colormap-json-file <COLORMAP_JSON_FILE>
-          JSON file of the colormap. If not specified, the grayscale colormap is used [default: ]
   -i, --image-size <IMAGE_SIZE>
           Width and height (width:height) of the image. If -1 is specified, the aspect ratio is the same as the bound [default: 1024:-1]
-  -i, --image-file <IMAGE_FILE>
+  -o, --output-filename <OUTPUT_FILENAME>
           File name of the output image [default: terrain.png]
+  -p, --particle-num <PARTICLE_NUM>
+          Number of particles. The larger the value, the more the quality of the terrain is improved [default: 50000]
+  -e, --erodibility-distribution-power <ERODIBILITY_DISTRIBUTION_POWER>
+          [advanced] Power of the erodibility distribution. The larger the value, the more the erodibility is concentrated on the lower side [default: 4.0]
+  -f, --fault-scale <FAULT_SCALE>
+          [advanced] Scale of the fault. The larger the value, the more virtual faults effect the terrain [default: 35.0]
+  -l, --land-ratio <LAND_RATIO>
+          [advanced] Approximate ratio of the land area. (0.0-1.0) [default: 0.6]
   -h, --help
           Print help
 ```
