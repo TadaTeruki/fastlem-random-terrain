@@ -38,6 +38,10 @@ pub struct ConfigParser {
     /// The larger the value, the more virtual faults effect the terrain.
     #[clap(short, long, default_value = "35.0")]
     pub fault_scale: f64,
+
+    /// [advanced] Approximate ratio of the land area. (0.0-1.0)
+    #[clap(short, long, default_value = "0.7")]
+    pub land_ratio: f64,
 }
 
 impl ConfigParser {
@@ -88,6 +92,7 @@ impl ConfigParser {
             image_width,
             image_height,
             output_filename: self.output_filename,
+            land_ratio: self.land_ratio,
         }
     }
 }
@@ -103,4 +108,5 @@ pub struct Config {
     pub image_width: Option<u32>,
     pub image_height: Option<u32>,
     pub output_filename: String,
+    pub land_ratio: f64,
 }

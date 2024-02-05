@@ -8,8 +8,11 @@ use fastlem::models::surface::{builder::TerrainModel2DBulider, sites::Site2D};
 use noise::{NoiseFn, Perlin};
 use terrain_graph::edge_attributed_undirected::EdgeAttributedUndirectedGraph;
 
+use crate::math::inversed_perlin_noise_curve;
+
 mod colormap;
 mod config;
+mod math;
 
 fn main() {
     let config = ConfigParser::parse().into_config();
@@ -138,6 +141,8 @@ fn generate_terrain(
         }
     };
 
+    let land_bias = -(inversed_perlin_noise_curve(config.land_ratio) - 0.5);
+
     let base_is_outlet = {
         sites
             .iter()
@@ -165,7 +170,7 @@ fn generate_terrain(
                     2.4,
                 ) * 0.5
                     + 0.5;
-                let continent_scale = 200.;
+                let continent_scale: f64 = 200.;
                 let noise_continent = octaved_perlin(
                     &perlin,
                     site.x / continent_scale,
@@ -175,8 +180,7 @@ fn generate_terrain(
                     1.8,
                 ) * 0.7
                     + 0.5;
-                let ocean_bias = -0.05;
-                noise_plate > noise_continent - ocean_bias
+                noise_plate > noise_continent - land_bias
             })
             .collect::<Vec<bool>>()
     };
@@ -282,25 +286,39 @@ fn determine_outlets(
     start_index: Vec<usize>,
     graph: &EdgeAttributedUndirectedGraph<f64>,
 ) -> Option<Vec<bool>> {
+    let random_start_index = if start_index.is_empty() {
+        None
+    } else {
+        Some(start_index[0])
+    };
     let mut queue = start_index
         .into_iter()
         .filter(|i| base_is_outlet[*i])
         .collect::<Vec<_>>();
-    if queue.is_empty() {
-        return None;
-    }
-    let mut outlets = vec![false; sites.len()];
-    while let Some(i) = queue.pop() {
-        if outlets[i] {
-            continue;
-        }
-        outlets[i] = true;
-        graph.neighbors_of(i).iter().for_each(|(j, _)| {
-            if !outlets[*j] && base_is_outlet[*j] {
-                queue.push(*j);
+    let mut is_outlet = if !queue.is_empty() {
+        let mut is_outlet = vec![false; sites.len()];
+        while let Some(i) = queue.pop() {
+            if is_outlet[i] {
+                continue;
             }
-        });
-    }
+            is_outlet[i] = true;
+            graph.neighbors_of(i).iter().for_each(|(j, _)| {
+                if !is_outlet[*j] && base_is_outlet[*j] {
+                    queue.push(*j);
+                }
+            });
+        }
+        is_outlet
+    } else {
+        vec![false; sites.len()]
+    };
 
-    Some(outlets)
+    if is_outlet.iter().any(|&b| b) {
+        Some(is_outlet)
+    } else if let Some(i) = random_start_index {
+        is_outlet[i] = true;
+        Some(is_outlet)
+    } else {
+        None
+    }
 }
