@@ -70,7 +70,9 @@ Options:
   -i, --image-size <IMAGE_SIZE>
           Width and height (width:height) of the image. If -1 is specified, the aspect ratio is the same as the bound [default: 1024:-1]
   -o, --output-filename <OUTPUT_FILENAME>
-          File name of the output image [default: terrain.png]
+          File name of the output image [default: terrain]
+  -f, --output-format <OUTPUT_FORMAT>
+          Output format of the terrain data. Supported formats: png, jpeg, csv [default: png]
   -p, --particle-num <PARTICLE_NUM>
           Number of particles. The larger the value, the more the quality of the terrain is improved [default: 50000]
       --erodibility-distribution-power <ERODIBILITY_DISTRIBUTION_POWER>
@@ -80,7 +82,9 @@ Options:
       --land-ratio <LAND_RATIO>
           [advanced] Approximate ratio of the land area (0.0-1.0) [default: 0.6]
       --convex-hull-is-always-outlet
-          [advanced] If true, the edge of the terrain is always the outlet
+          [advanced] If true, the edge points of the terrain are always outlet and its elevation is fixed to 0
+      --global-max-slope <GLOBAL_MAX_SLOPE>
+          [advanced] Maximum slope angle of the terrain. The larger the value, the more the terrain is rough (radian, max: Pi/2) [default: 1.57]
   -h, --help
           Print help
 ```
