@@ -1,3 +1,9 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+
 fn perlin_noise_curve(t: f64) -> f64 {
     t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
 }
