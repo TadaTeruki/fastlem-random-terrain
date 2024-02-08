@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::io::Write;
+
 use clap::Parser;
 use colormap::ColorMap;
 use config::{Config, ConfigParser};
@@ -5,6 +8,7 @@ use fastlem::core::{parameters::TopographicalParameters, traits::Model};
 use fastlem::lem::generator::TerrainGenerator;
 use fastlem::models::surface::terrain::Terrain2D;
 use fastlem::models::surface::{builder::TerrainModel2DBulider, sites::Site2D};
+use image::ImageError;
 use noise::{NoiseFn, Perlin};
 use terrain_graph::edge_attributed_undirected::EdgeAttributedUndirectedGraph;
 
@@ -64,15 +68,20 @@ fn main() {
     }
 
     let terrain = generate_terrain(&config, bound_min, bound_max, bound_range);
-    write_to_image(
-        &config.output_filename,
+
+    write_to_file(
+        &config,
         bound_min,
         bound_range,
         image_width,
         image_height,
         &terrain,
         colormap,
-    );
+    )
+    .unwrap_or_else(|e| {
+        eprintln!("Error: {}", e);
+        std::process::exit(1);
+    });
 }
 
 fn generate_terrain(
@@ -248,33 +257,71 @@ fn generate_terrain(
         .unwrap()
 }
 
-fn write_to_image(
-    output_filename: &str,
+fn write_to_file(
+    config: &Config,
     bound_min: Site2D,
     bound_range: Site2D,
     image_width: u32,
     image_height: u32,
     terrain: &Terrain2D,
     colormap: ColorMap,
-) {
+) -> Result<(), ImageError> {
     println!("writing...");
 
-    let mut image_buf = image::RgbImage::new(image_width, image_height);
+    let raster_elevation = (0..image_height)
+        .map(|imgy| {
+            (0..image_width)
+                .map(|imgx| {
+                    let x = bound_min.x
+                        + bound_range.x * ((imgx as f64 + 0.5) / (image_width as f64 + 1.0));
+                    let y = bound_min.y
+                        + bound_range.y * ((imgy as f64 + 0.5) / (image_height as f64 + 1.0));
+                    let site = Site2D { x, y };
+                    terrain.get_elevation(&site)
+                })
+                .collect::<Vec<Option<f64>>>()
+        })
+        .collect::<Vec<Vec<Option<f64>>>>();
 
-    for imgx in 0..image_width {
-        for imgy in 0..image_height {
-            let x =
-                bound_min.x + bound_range.x * ((imgx as f64 + 0.5) / (image_width as f64 + 1.0));
-            let y =
-                bound_min.y + bound_range.y * ((imgy as f64 + 0.5) / (image_height as f64 + 1.0));
-            let site = Site2D { x, y };
-            let elevation = terrain.get_elevation(&site);
-            if let Some(elevation) = elevation {
-                image_buf.put_pixel(imgx, imgy, image::Rgb(colormap.get_color(elevation)));
+    let ext = match config.output_format {
+        config::OutputFormat::Png => ".png",
+        config::OutputFormat::Jpeg => ".jpeg",
+        config::OutputFormat::Csv => ".csv",
+    };
+
+    let output_filename = format!("{}{}", config.output_filename, ext);
+
+    match config.output_format {
+        config::OutputFormat::Png | config::OutputFormat::Jpeg => {
+            let mut image_buf = image::RgbImage::new(image_width, image_height);
+            for (imgy, row) in raster_elevation.iter().enumerate() {
+                for (imgx, elevation) in row.iter().enumerate() {
+                    if let Some(elevation) = elevation {
+                        image_buf.put_pixel(
+                            imgx as u32,
+                            imgy as u32,
+                            image::Rgb(colormap.get_color(*elevation)),
+                        );
+                    }
+                }
             }
+            image_buf.save(output_filename)
+        }
+        config::OutputFormat::Csv => {
+            let mut file = File::create(output_filename)?;
+            for row in raster_elevation.iter() {
+                for elevation in row.iter() {
+                    if let Some(elevation) = elevation {
+                        file.write_all(format!("{},", elevation).as_bytes())?;
+                    } else {
+                        file.write_all(b",")?;
+                    }
+                }
+                file.write_all(b"\n")?;
+            }
+            Ok(())
         }
     }
-    image_buf.save(output_filename).unwrap();
 }
 
 fn octaved_perlin(

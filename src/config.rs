@@ -1,5 +1,11 @@
 use clap::Parser;
 
+pub enum OutputFormat {
+    Png,
+    Jpeg,
+    Csv,
+}
+
 #[derive(Parser, Debug)]
 pub struct ConfigParser {
     /// Width and height (width:height) of the bound.
@@ -21,8 +27,13 @@ pub struct ConfigParser {
     pub image_size: String,
 
     /// File name of the output image.
-    #[clap(short, long, default_value = "terrain.png")]
+    #[clap(short, long, default_value = "terrain")]
     pub output_filename: String,
+
+    /// Output format of the terrain data.
+    /// Supported formats: png, jpeg, csv
+    #[clap(short = 'f', long, default_value = "png")]
+    pub output_format: String,
 
     /// Number of particles.
     /// The larger the value, the more the quality of the terrain is improved.
@@ -101,6 +112,12 @@ impl ConfigParser {
             image_width,
             image_height,
             output_filename: self.output_filename,
+            output_format: match self.output_format.as_str() {
+                "png" => OutputFormat::Png,
+                "jpeg" | "jpg" => OutputFormat::Jpeg,
+                "csv" => OutputFormat::Csv,
+                _ => panic!("Invalid format: {}", self.output_format),
+            },
             land_ratio: self.land_ratio,
             convex_hull_is_always_outlet: self.convex_hull_is_always_outlet,
             global_max_slope: self.global_max_slope,
@@ -119,6 +136,7 @@ pub struct Config {
     pub image_width: Option<u32>,
     pub image_height: Option<u32>,
     pub output_filename: String,
+    pub output_format: OutputFormat,
     pub land_ratio: f64,
     pub convex_hull_is_always_outlet: bool,
     pub global_max_slope: f64,
