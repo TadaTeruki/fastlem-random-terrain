@@ -43,9 +43,14 @@ pub struct ConfigParser {
     #[clap(long, default_value = "0.6")]
     pub land_ratio: f64,
 
-    /// [advanced] If true, the edge of the terrain is always the outlet.
+    /// [advanced] If true, the edge points of the terrain are always outlet and its elevation is fixed to 0.
     #[clap(long)]
     pub convex_hull_is_always_outlet: bool,
+
+    /// [advanced] Maximum slope angle of the terrain.
+    /// The larger the value, the more the terrain is rough (radian, max: Pi/2).
+    #[clap(long, default_value = "1.57")]
+    pub global_max_slope: f64,
 }
 
 impl ConfigParser {
@@ -98,6 +103,7 @@ impl ConfigParser {
             output_filename: self.output_filename,
             land_ratio: self.land_ratio,
             convex_hull_is_always_outlet: self.convex_hull_is_always_outlet,
+            global_max_slope: self.global_max_slope,
         }
     }
 }
@@ -115,4 +121,5 @@ pub struct Config {
     pub output_filename: String,
     pub land_ratio: f64,
     pub convex_hull_is_always_outlet: bool,
+    pub global_max_slope: f64,
 }

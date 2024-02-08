@@ -236,6 +236,7 @@ fn generate_terrain(
                 TopographicalParameters::default()
                     .set_erodibility(noise_erodibility)
                     .set_is_outlet(is_outlet[i])
+                    .set_max_slope(Some(config.global_max_slope))
             })
             .collect::<Vec<TopographicalParameters>>()
     };
